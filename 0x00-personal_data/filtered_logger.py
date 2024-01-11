@@ -6,12 +6,10 @@ import re
 
 
 def filter_datum(fields, redaction, message, separator):
-    """Obfuscates specified fields in a
-    log message using a regex substitution.
     """
-    return re.sub(
-        rf'({"|".join(f"(?:{re.escape(field)})" for field in fields)})'
-        rf'=[^{separator}]+',
-        rf'\1={redaction}',
-        message
-    )
+        function: filter_datum
+    """
+    for field in fields:
+        message = re.sub(f"{field}=(.*?){separator}",
+                         f"{field}={redaction}{separator}", message)
+    return message
