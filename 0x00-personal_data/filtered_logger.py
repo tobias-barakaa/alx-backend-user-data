@@ -3,10 +3,12 @@
     function: filter_datum
 """
 
+import re
+
+
 def filter_datum(fields, redaction, message, separator):
     """
         function: filter_datum
     """
-    for i in fields:
-        message = message.replace(i + '=', i + '=' + redaction + separator)
-    return message
+    return re.sub(r'(?<=\b' + '|'.join(fields) + r')=([^{}]+)'.format(separator), '=' + redaction, message)
+
