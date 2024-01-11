@@ -2,7 +2,6 @@
 """
     function: filter_datum
 """
-
 import re
 
 
@@ -11,7 +10,8 @@ def filter_datum(fields, redaction, message, separator):
     log message using a regex substitution.
     """
     return re.sub(
-        rf'({"|".join(f"(?:{re.escape(field)})" for field in fields)})=[^{separator}]+',
+        rf'({"|".join(f"(?:{re.escape(field)})" for field in fields)})'
+        rf'=[^{separator}]+',
         rf'\1={redaction}',
         message
     )
