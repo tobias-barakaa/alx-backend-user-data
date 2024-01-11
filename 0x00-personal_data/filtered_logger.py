@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    function: filter_datum
+function: filter_datum
 """
 import re
 from typing import List
