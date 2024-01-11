@@ -3,9 +3,11 @@
     function: filter_datum
 """
 import re
+from typing import List
 
 
-def filter_datum(fields, redaction, message, separator):
+def filter_datum(fields:List[str], redaction:[list],
+                 message:str, separator:str) -> str:
     """
         function: filter_datum
     """
