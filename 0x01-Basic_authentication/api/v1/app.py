@@ -36,9 +36,11 @@ def forbidden(error) -> str:
 
 
 auth = None
-if os.getenv("AUTH_TYPE") == "auth":
-    from api.v1.auth.auth import Auth
-    auth = Auth()
+if 'AUTH_TYPE' in os.environ:
+    auth_type = os.environ['AUTH_TYPE']
+    if auth_type == 'auth':
+        from api.v1.auth.auth import Auth
+        auth = Auth()
 
 
 if __name__ == "__main__":
