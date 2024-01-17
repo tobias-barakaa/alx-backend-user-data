@@ -8,6 +8,12 @@ from api.v1.auth.auth import Auth
 from flask import Flask, jsonify, abort, request
 from flask_cors import (CORS, cross_origin)
 import os
+auth = None
+if 'AUTH_TYPE' in os.environ:
+    auth_type = os.environ['AUTH_TYPE']
+    if auth_type == 'auth':
+        from api.v1.auth.auth import Auth
+        auth = Auth()
 
 
 app = Flask(__name__)
@@ -34,14 +40,6 @@ def forbidden(error) -> str:
     """ Forbidden handler
     """
     return jsonify({"error": "Forbidden"}), 403
-
-
-auth = None
-if 'AUTH_TYPE' in os.environ:
-    auth_type = os.environ['AUTH_TYPE']
-    if auth_type == 'auth':
-        from api.v1.auth.auth import Auth
-        auth = Auth()
 
 
 if __name__ == "__main__":
