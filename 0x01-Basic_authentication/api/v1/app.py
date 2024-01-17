@@ -35,6 +35,12 @@ def forbidden(error) -> str:
     return jsonify({"error": "Forbidden"}), 403
 
 
+auth = None
+if os.getenv("AUTH_TYPE") == "auth":
+    from api.v1.auth.auth import Auth
+    auth = Auth()
+
+
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
     port = getenv("API_PORT", "5000")
