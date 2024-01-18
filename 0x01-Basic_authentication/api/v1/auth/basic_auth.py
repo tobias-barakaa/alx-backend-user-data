@@ -4,8 +4,6 @@
 from flask import request
 from typing import List, TypeVar
 from api.v1.auth.auth import Auth
-from models import db_session
-from models.user import User
 
 
 class BasicAuth(Auth):
@@ -62,6 +60,8 @@ class BasicAuth(Auth):
             return None
         if user_pwd is None or type(user_pwd) is not str:
             return None
+        from models import db_session
+        from models.user import User
         users = db_session.query(User).filter_by(email=user_email).all()
         if users is None or users == []:
             return None
