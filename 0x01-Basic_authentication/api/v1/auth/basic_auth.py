@@ -54,22 +54,28 @@ class BasicAuth(Auth):
 
     def user_object_from_credentials(self, user_email: str,
                                      user_pwd: str) -> TypeVar('User'):
-        """ user_object_from_credentials
-        """
-        if user_email is None or type(user_email) is not str:
+        def user_object_from_credentials(self, user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        """Return the User instance based on email and password."""
+        if user_email is None or not isinstance(user_email, str):
             return None
-        if user_pwd is None or type(user_pwd) is not str:
+
+        if user_pwd is None or not isinstance(user_pwd, str):
             return None
-        from models import db_session
         from models.user import User
-        users = db_session.query(User).filter_by(email=user_email).all()
-        if users is None or users == []:
+        users = User.search({"email": user_email})
+
+        # Return None if no user found in the database
+        if not users:
             return None
+
+        # Check if the provided password is valid for any of the users found
         for user in users:
-            if not user.is_valid_password(user_pwd):
-                return None
-            else:
+            if user.is_valid_password(user_pwd):
                 return user
+
+        # Return None if the password is not valid for any user
+        return None
 
     def current_user(self, request=None) -> TypeVar('User'):
         """ current_user
