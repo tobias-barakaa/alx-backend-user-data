@@ -5,6 +5,7 @@ from flask import request
 from typing import List, TypeVar
 from api.v1.auth.auth import Auth
 
+
 class BasicAuth(Auth):
     """ BasicAuth class
     """
@@ -37,7 +38,6 @@ class BasicAuth(Auth):
             return sample_string
         except Exception:
             return None
-        
 
     def extract_user_credentials(self,
                                  decoded_base64_authorization_header: str
