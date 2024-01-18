@@ -57,23 +57,16 @@ class BasicAuth(Auth):
         """Return the User instance based on email and password."""
         if user_email is None or not isinstance(user_email, str):
             return None
-
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
         from models.user import User
         users = User.search({"email": user_email})
-
-        # Return None if no user found in the database
         if not users:
             return None
-
-        # Check if the provided password is valid for any of the users found
         for user in users:
             if user.is_valid_password(user_pwd):
                 return user
-
-        # Return None if the password is not valid for any user
-        return None
+            return None
 
     def current_user(self, request=None) -> TypeVar('User'):
         """ current_user
