@@ -1,28 +1,30 @@
 #!/usr/bin/env python3
-"""DB module
+"""DB Module
 """
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
-
+from sqlalchemy.exc import InvalidRequestError
 from user import Base, User
+
 
 class DB:
     """DB class
     """
 
-    def __init__(self) -> None:
-        """Initialize a new DB instance
+    def __init__(self):
+        """Initializes a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
 
     @property
-    def _session(self) -> Session:
-        """Memoized session object
+    def _session(self):
+        """Private memoized session method (object)
+        Never used outside DB class
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -30,22 +32,10 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """Add a new user to the database.
-
-        Args:
-            email (str): User's email.
-            hashed_password (str): User's hashed password.
-
-        Returns:
-            User: Created User object.
+        """Add new user to database
+        Returns a User object
         """
-        try:
-            new_user = User(email=email, hashed_password=hashed_password)
-            self._session.add(new_user)
-            self._session.commit()
-            return new_user
-        except Exception as e:
-            # Handle exceptions (e.g., database errors)
-            print(f"Error adding user: {e}")
-            self._session.rollback()
-            raise
+        user = User(email=email, hashed_password=hashed_password)
+        self._session.add(user)
+        self._session.commit()
+        return user
