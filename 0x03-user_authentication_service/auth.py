@@ -36,8 +36,7 @@ class Auth:
         """Takes email and password required arguments and returns a boolean."""
         try:
             user = self._db.find_user_by(email=email)
-            # Use bcrypt.checkpw to verify the password
-            return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password.encode('utf-8'))
+            return bcrypt.checkpw(password.encode(), user.hashed_password)
         except NoResultFound:
             return False
 
