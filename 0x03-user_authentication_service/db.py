@@ -48,27 +48,17 @@ class DB:
         return new_user
 
     def find_user_by(self, **kwargs) -> User:
-        """Find a user in the database based on arbitrary keyword arguments.
-
-        Args:
-            **kwargs: Arbitrary keyword arguments to filter the query.
-
-        Returns:
-            User: User object found in the database.
-
-        Raises:
-            NoResultFound: When no results are found.
-            InvalidRequestError: When wrong query arguments are passed.
+        """ Takes in arbitrary keyword arguments and returns the first row
+        found in the users table as filtered by the method’s input arguments.
         """
-        try:
-            user = self._session.query(User).filter_by(**kwargs).first()
-            if not user:
-                raise NoResultFound("No user found")
-            return user
-        except InvalidRequestError as e:
-            print(f"Invalid request error: {e}")
-            self._session.rollback()
-            raise
+        if not kwargs:
+            raise InvalidRequestError
+        if not all(hasattr(User, k) for k in kwargs):
+            raise InvalidRequestError
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if not user:
+            raise NoResultFound
+        return user
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Update a user in the database.
