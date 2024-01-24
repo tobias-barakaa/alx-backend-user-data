@@ -17,7 +17,6 @@ def welcome() -> str:
     """
     return jsonify({"message": "Bienvenue"}), 200
 
-
 @app.route('/users', methods=['POST'], strict_slashes=False)
 def users() -> str:
     """POST /users
@@ -34,6 +33,15 @@ def users() -> str:
         return jsonify({"email": user.email, "message": "user created"}), 200
     except ValueError:
         return jsonify({"message": "email already registered"}), 400
+    
+def valid_login(email: str, password: str) -> bool:
+    """Check if login is valid
+    """
+    try:
+        user = AUTH.find_user_by(email=email)
+        return user.is_valid_password(password)
+    except Exception:
+        return False
 
 
 if __name__ == "__main__":
