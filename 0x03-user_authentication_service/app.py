@@ -56,9 +56,10 @@ def login() -> str:
       - Session ID as JSON
     """
     try:
-        data = request.form
+        data = request.json
         email = data['email']
         password = data['password']
+
         if not valid_login(email, password):
             abort(401)
         else:
@@ -66,8 +67,11 @@ def login() -> str:
             response = jsonify({"email": email, "message": "logged in"})
             response.set_cookie('session_id', session_id, httponly=True)
             return response
+
+    except KeyError as e:
+        abort(400, f"Missing key in JSON data: {e}")
     except ValueError as e:
-        abort(401, str(e))
+        abort(500, f"An error occurred: {e}")
 
 
 if __name__ == "__main__":
