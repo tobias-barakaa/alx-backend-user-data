@@ -1,30 +1,81 @@
 #!/usr/bin/env python3
+"""App Module
 """
-Main file
-"""
-from db import DB
-from user import User
+import requests
 
-from sqlalchemy.exc import InvalidRequestError
-from sqlalchemy.orm.exc import NoResultFound
+def register_user(email: str, password: str) -> None:
+    """Register user
+    """
+    url = "http://your-web-server-base-url"
+    data = {"email": email, "password": password}
+    response = requests.post(url + "/users", data=data)
+    assert response.status_code == 200
+    assert response.json() == {"email": email, "message": "user created"}
+    
+def log_in_wrong_password(email: str, password: str) -> None:
+    """Log in with wrong password
+    """
+    url = "http://your-web-server-base-url"
+    data = {"email": email, "password": password}
+    response = requests.post(url + "/sessions", data=data)
+    assert response.status_code == 401
+    assert response.json() == {"message": "wrong password"}
 
+def profile_unlogged() -> None:
+    """Profile of unlogged user
+    """
+    url = "http://your-web-server-base-url"
+    response = requests.get(url + "/profile")
+    assert response.status_code == 403
+    assert response.json() == {"message": "Missing auth token"}
 
-my_db = DB()
+def log_in(email: str, password: str) -> str:
+    """Log in
+    """
+    url = "http://your-web-server-base-url"
+    data = {"email": email, "password": password}
+    response = requests.post(url + "/sessions", data=data)
+    assert response.status_code == 200
+    assert response.json() == {"email": email, "message": "logged in"}
+    session_id = response.cookies.get("session_id")
+    assert session_id is not None
+    return session_id
 
-user = my_db.add_user("test@test.com", "PwdHashed")
-print(user.id)
+def profile_logged(session_id: str) -> None:
+    """Profile of logged user
+    """
+    url = "http://your-web-server-base-url"
+    response = requests.get(url + "/profile", cookies={"session_id": session_id})
+    assert response.status_code == 200
+    assert response.json() == {"email": email}
 
-find_user = my_db.find_user_by(email="test@test.com")
-print(find_user.id)
+def log_out(session_id: str) -> None:
+    """Log out
+    """
+    url = "http://your-web-server-base-url"
+    response = requests.delete(url + "/sessions", cookies={"session_id": session_id})
+    assert response.status_code == 200
+    assert response.json() == {}
+    session_id = response.cookies.get("session_id")
+    assert session_id is None
 
-try:
-    find_user = my_db.find_user_by(email="test2@test.com")
-    print(find_user.id)
-except NoResultFound:
-    print("Not found")
+def reset_password_token(email: str) -> str:
+    """Reset password token
+    """
+    url = "http://your-web-server-base-url"
+    data = {"email": email}
+    response = requests.post(url + "/reset_password", data=data)
+    assert response.status_code == 200
+    assert response.json() == {"email": email, "message": "Reset password sent"}
+    reset_token = response.json()["reset_token"]
+    assert reset_token is not None
+    return reset_token
 
-try:
-    find_user = my_db.find_user_by(no_email="test@test.com")
-    print(find_user.id)
-except InvalidRequestError:
-    print("Invalid")        
+def update_password(email: str, reset_token: str, new_password: str) -> None:
+    """Update password
+    """
+    url = "http://your-web-server-base-url"
+    data = {"email": email, "reset_token": reset_token, "new_password": new_password}
+    response = requests.put(url + "/reset_password", data=data)
+    assert response.status_code == 200
+    assert response.json() == {"email": email, "message": "Password updated"}
