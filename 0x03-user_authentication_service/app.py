@@ -79,7 +79,7 @@ def logout() -> str:
       - Empty JSON
     """
     try:
-        session_id = request.form['session_id']
+        session_id = request.cookies['session_id']
         user = AUTH.get_user_from_session_id(session_id)
         AUTH.destroy_session(user.id)
         return redirect('/')
