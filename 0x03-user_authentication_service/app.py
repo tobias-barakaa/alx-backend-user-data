@@ -57,8 +57,8 @@ def login() -> str:
     """
     try:
         data = request.form
-        email = data['email']
-        password = data['password']
+        email = data["email"]
+        password = data["password"]
         if not valid_login(email, password):
             abort(401)
         else:
