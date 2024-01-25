@@ -56,7 +56,7 @@ def login() -> str:
       - Session ID as JSON
     """
     try:
-        data = request.json
+        data = request.form
         email = data['email']
         password = data['password']
         if not valid_login(email, password):
