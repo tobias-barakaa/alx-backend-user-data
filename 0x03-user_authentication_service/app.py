@@ -64,7 +64,7 @@ def login() -> str:
         else:
             session_id = AUTH.create_session(email)
             response = jsonify({"email": email, "message": "logged in"})
-            response.set_cookie('session_id', session_id, httponly=True)
+            response.set_cookie("session_id", session_id, httponly=True)
             return response
     except KeyError as e:
         abort(401, str(e))
