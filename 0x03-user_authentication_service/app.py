@@ -46,7 +46,7 @@ def valid_login(email: str, password: str) -> bool:
         return False
 
 
-@app.route('/sessions', methods=['POST'])
+@app.route('/sessions', methods=['POST'], strict_slashes=False)
 def login() -> str:
     """POST /sessions
     JSON body:
