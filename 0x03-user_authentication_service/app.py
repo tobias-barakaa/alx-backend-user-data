@@ -68,6 +68,23 @@ def login() -> str:
             return response
     except KeyError as e:
         abort(401, str(e))
+    
+
+@app.route('/sessions', methods=['DELETE'])
+def logout():
+    """DELETE /sessions
+    JSON body:
+      - session_id
+    Return:
+      - Empty JSON
+    """
+    session_id = request.cookies.get('session_id')
+    if session_id:
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            AUTH.destroy_session(user.id)
+            return redirect(url_for('welcome'))
+    abort(403)
 
 
 if __name__ == "__main__":
