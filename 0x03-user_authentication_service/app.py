@@ -2,7 +2,7 @@
 """App Module
 """
 
-from flask import Flask, jsonify, request, redirect, url_for
+from flask import Flask, jsonify, request, abort, redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -55,15 +55,16 @@ def login() -> str:
     Return:
       - Session ID as JSON
     """
-    email = request.form['email']
-    password = request.form['password']
+    data = request.form
+    email = data.get('email')
+    password = data.get('password')
     if valid_login(email, password):
         session_id = AUTH.create_session(email)
         response = jsonify({"email": email, "message": "logged in"})
         response.set_cookie('session_id', session_id)
         return response
     else:
-        flask.abort(401)
+        abort(401)
 
 
 if __name__ == "__main__":
