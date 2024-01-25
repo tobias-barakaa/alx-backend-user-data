@@ -2,7 +2,7 @@
 """App Module
 """
 
-from flask import Flask, jsonify, request, abort, redirect, url_for
+from flask import Flask, jsonify, request, redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -63,7 +63,7 @@ def login() -> str:
         response.set_cookie('session_id', session_id)
         return response
     else:
-        abort(401)
+        flask.abort(401)
 
 
 if __name__ == "__main__":
