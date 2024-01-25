@@ -55,19 +55,16 @@ def login() -> str:
     Return:
       - Session ID as JSON
     """
-    try:
-        data = request.form
-        email = data["email"]
-        password = data["password"]
-        if not valid_login(email, password):
-            abort(401)
-        else:
-            session_id = AUTH.create_session(email)
-            response = jsonify({"email": email, "message": "logged in"})
-            response.set_cookie("session_id", session_id, httponly=True)
-            return response
-    except KeyError as e:
-        abort(401, str(e))
+    data = request.form
+    email = data["email"]
+    password = data["password"]
+    if not valid_login(email, password):
+        abort(401)
+    else:
+        session_id = AUTH.create_session(email)
+        response = jsonify({"email": email, "message": "logged in"})
+        response.set_cookie("session_id", session_id, httponly=True)
+        return response
 
 
 @app.route("/sessions", methods=["DELETE"], strict_slashes=True)
