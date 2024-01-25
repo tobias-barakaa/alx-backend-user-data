@@ -55,16 +55,19 @@ def login() -> str:
     Return:
       - Session ID as JSON
     """
-    data = request.form
-    email = data.get('email')
-    password = data.get('password')
-    if not Auth.valid_login(email, password):
-        abort(401)
-    else:
-        session_id = AUTH.create_session(email)
-        response = jsonify({"email": email, "message": "logged in"})
-        response.set_cookie('session_id', session_id)
-        return response
+    try:
+        data = request.form
+        email = data.get('email')
+        password = data.get('password')
+        if valid_login(email, password):
+            session_id = AUTH.create_session(email)
+            response = jsonify({"email": email, "message": "logged in"})
+            response.set_cookie('session_id', session_id, httponly=True)
+            return response
+        else:
+            raise ValueError("Invalid login credentials")
+    except ValueError as e:
+        abort(401, str(e))
 
 
 if __name__ == "__main__":
