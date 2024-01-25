@@ -71,25 +71,20 @@ def login() -> str:
 
 
 @app.route('/sessions', methods=['DELETE'])
-def logout() -> str:
+def logout():
     """DELETE /sessions
+    JSON body:
+      - session_id
     Return:
-      - Redirect to GET /
-      - 403 HTTP status if session ID is 
-      invalid or user does not exist
+      - Empty JSON
     """
-    try:
-        session_id = request.cookies.get('session_id')
-        email = Auth.get_user_from_session_id(session_id)
-
-        if email:
-            Auth.destroy_session(email.id)
+    session_id = request.cookies.get('session_id')
+    if session_id:
+        user = AUTH.get_user_from_session_id(session_id)
+        if user:
+            AUTH.destroy_session(user.id)
             return redirect(url_for('welcome'))
-        else:
-            abort(403)
-
-    except KeyError as e:
-        abort(403, str(e))
+    abort(403)
 
 
 if __name__ == "__main__":
