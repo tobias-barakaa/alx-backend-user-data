@@ -2,7 +2,7 @@
 """App Module
 """
 
-from flask import Flask, jsonify, request, abort, redirect
+from flask import Flask, jsonify, request, abort, redirect, url_for
 from auth import Auth
 
 app = Flask(__name__)
@@ -81,19 +81,20 @@ def logout():
     return redirect('/')
 
 
-@app.route('/profile', methods=['GET'])
+@app.route('/profile', methods=['GET'], strict_slashes=False)
 def profile() -> str:
     """GET /profile
     Return:
       - User profile information JSON
     """
-    session_id = request.cookies.get("session_id", None)
+    session_id = request.cookies.get("session_id")
     if session_id is None:
         abort(403)
     user = AUTH.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
-    return jsonify({"email": user.email}), 200
+    jsonmessage = {"email": user.email}
+    return jsonify(jsonmessage), 200
 
 
 if __name__ == "__main__":
