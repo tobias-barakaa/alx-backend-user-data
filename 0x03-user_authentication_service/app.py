@@ -70,7 +70,7 @@ def login() -> str:
         abort(401, str(e))
 
 
-@app.route("/sessions", methods=["DELETE"])
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
 def logout():
     """Logout a user by clearing their session.
     """
