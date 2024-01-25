@@ -68,7 +68,7 @@ def login() -> str:
             return response
     except KeyError as e:
         abort(401, str(e))
-    
+
 
 @app.route('/sessions', methods=['DELETE'])
 def logout():
